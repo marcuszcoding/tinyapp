@@ -12,6 +12,9 @@
   </head>
   <%- include('partials/_header') %>
   <body>
+    <link 
+    href = '#' 
+  />
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -20,7 +23,13 @@
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
-      <div class="card-footer text-muted"></div>
+      <div class="card-footer text-muted">
+        <h3>Edit</h3>
+        <form method = "POST" action="/urls/<%= id %>/rewrite">
+          <input type = "text" name = "newID" placeholder = "Enter a new URL">
+          <button type = "submit">Submit</button>
+        </form>
+      </div>
     </div>
     <!-- Bootstrap JS -->
     <script

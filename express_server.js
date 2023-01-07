@@ -9,9 +9,15 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const generateRandomString = (length = 6)=> Math.random().toString(20).substr(2, length);
-//randomly generated string with numbers, found not made. 
+const generateRandomString = (length = 6)=> Math.random().toString(36).substr(2, length);
+//randomly generated string with numbers with length set to 6 
 app.use(express.urlencoded({ extended: true }));
+
+// READ (ALL)
+// READ (ONE)
+// CREATE 
+// UPDATE
+// DELETE
 
 app.get("/", (req, res) => {
   res.send("Hello!");

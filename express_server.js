@@ -13,6 +13,7 @@ let urlDatabase = {
 
 const randomGenString = (length = 6) => Math.random().toString(36).substr(2, length);
 //randomly generated string with numbers with length set to 6 
+
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true })); //body parser
 app.use(cookieParser()); //to create cookies, makes them available to req and res
@@ -38,6 +39,11 @@ app.post("/login", (req, res) => {
   res.redirect(`/urls`)
 })
 
+app.get("/register", (req, res) => {
+  const templateVars = { username: req.cookies["username"] };
+
+  res.render("urls_register", templateVars)
+})
 
 // Get shows you the page
 // app.get('/login', (req, res) => {

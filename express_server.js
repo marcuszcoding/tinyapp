@@ -24,6 +24,7 @@ const users = {
   },
 };
 
+// Function for finding user by their email
 const findUserByEmail = function(email) {
   for (const uid in users) {
     const userObj = users[uid];
@@ -35,7 +36,7 @@ const findUserByEmail = function(email) {
 };
 
 const randomGenString = (length = 6) => Math.random().toString(36).substr(2, length);
-//randomly generated string with numbers with length set to 6
+//Randomly generated string with numbers with length set to 6
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true })); //body parser
@@ -49,7 +50,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// READ (All)
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -74,13 +74,13 @@ app.get("/register", (req, res) => {
 
 // POST REGISTER
 app.post("/register", (req, res) => {
-  const { email, password } = req.body; // destructure of the above code
+  const { email, password } = req.body; // destructure
 
   if (!email || !password) {
     return res.status(400).send("<h1> Error! Email and Password cannot be blank! </h1>");
-  }
+  } //Error if when registering the email or password is empty
 
-  // Need else if to check if email is already there??
+  // Checking for email below
 
   for (const uid in users) {
     const userObj = users[uid];
@@ -89,9 +89,7 @@ app.post("/register", (req, res) => {
     }
   }
 
-
   let id = randomGenString();
-  
   const user = {
     id,
     email,
@@ -108,16 +106,15 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // destructure of req.body.email and req.body.password
   const foundUser = findUserByEmail(email);
-  // Need to look for
+  // If no user email is found
   if (!foundUser) {
     return res.status(403).send("<h1> Error! Email was not found! </h1>");
-  }
+  } //if user is found but password does not match
   if (foundUser.password !== password) {
     return res.status(403).send("<h1> Error! Password is not correct! </h1>");
   }
-  console.log("hello");
+
   let id = randomGenString();
-  
   const user = {
     id,
     email,
@@ -128,7 +125,6 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
-// CREATE (creating via post)
 app.post("/urls", (req, res) => {
   const id = randomGenString();
   urlDatabase[id] = req.body.longURL;
@@ -142,7 +138,6 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// READ (ONE)
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
@@ -158,7 +153,6 @@ app.get("/u/:id", (req, res) => {
 });
 
 // UPDATE
-
 app.post("/urls/:id/rewrite", (req, res) => {
   const id = req.params.id;
   const newURL = req.body.newID;
@@ -167,7 +161,6 @@ app.post("/urls/:id/rewrite", (req, res) => {
 });
 
 // DELETE
-
 app.post("/urls/:id/delete", (req, res)=> {
   const id = req.params.id;
   delete urlDatabase[id];
@@ -181,13 +174,6 @@ app.post("/logout", (req, res) => {
 });
 
 // LISTEN
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// READ (ALL)
-// READ (ONE)
-// CREATE
-// UPDATE
-// DELETE

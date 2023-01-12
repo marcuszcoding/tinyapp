@@ -2,9 +2,17 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require("morgan");
+const cookieSession = require("cookie-session")
 const cookieParser = require("cookie-parser");
 
 app.set("view engine", "ejs");
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secret'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",

@@ -2,17 +2,11 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require("morgan");
+const bcrypt = require("bcryptjs")
 const cookieSession = require("cookie-session")
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 
 app.set("view engine", "ejs");
-app.use(cookieSession({
-  name: 'session',
-  keys: ['secret'],
-
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -43,12 +37,21 @@ const findUserByEmail = function(email) {
   return null;
 };
 
+const cookieSessionConfig = cookieSession({
+  name: 'session',
+  keys: ['secret'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+})
+
 const randomGenString = (length = 6) => Math.random().toString(36).substr(2, length);
 //Randomly generated string with numbers with length set to 6
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true })); //body parser
-app.use(cookieParser()); //to create cookies, makes them available to req and res
+app.use(cookieSessionConfig)
+// app.use(cookieParser()); // to create cookies, makes them available to req and res
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -63,7 +66,10 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies["userId"]]
   };
-  res.render("urls_index", templateVars);
+  if (req.cookies.userId) {
+    return res.render("urls_index", templateVars);
+  }
+  res.redirect("/login");
 });
 
 // Render Login Page
@@ -77,6 +83,9 @@ app.get('/login', (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { user: null };
 
+  if (req.cookies.userId) {
+    return res.redirect("/urls");
+  }
   res.render("urls_register", templateVars);
 });
 
@@ -143,6 +152,9 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.cookies["userId"]]
   };
+  if (!req.cookies.userId) {
+    return res.redirect("/login");
+  }
   res.render("urls_new", templateVars);
 });
 

@@ -11,11 +11,11 @@ app.set("view engine", "ejs");
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
+    userId: "aJ48lW",
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW",
+    userId: "aJ48lW",
   },
 };
 
@@ -37,6 +37,16 @@ const findUserByEmail = function(email) {
   }
   return null;
 };
+
+const urlsForUser = function(id) {
+  let matchingURL = {}
+  for (let key in urlDatabase) {
+    if (id === urlDatabase[key].userId) {
+      matchingURL[key] = urlDatabase[key].longURL
+    }
+  }
+  return matchingURL
+}
 
 const randomGenString = (length = 6) => Math.random().toString(36).substr(2, length);
 //Randomly generated string with numbers with length set to 6
@@ -172,7 +182,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 

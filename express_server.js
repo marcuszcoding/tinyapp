@@ -3,14 +3,20 @@ const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require("morgan");
 const bcrypt = require("bcryptjs")
-const cookieSession = require("cookie-session")
-// const cookieParser = require("cookie-parser");
+// const cookieSession = require("cookie-session")
+const cookieParser = require("cookie-parser");
 
 app.set("view engine", "ejs");
 
-let urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 const users = {
@@ -18,11 +24,6 @@ const users = {
     id: "userRandomID",
     email: "user@example.com",
     password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
   },
 };
 
@@ -37,21 +38,19 @@ const findUserByEmail = function(email) {
   return null;
 };
 
-const cookieSessionConfig = cookieSession({
-  name: 'session',
-  keys: ['secret'],
-
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
-})
-
 const randomGenString = (length = 6) => Math.random().toString(36).substr(2, length);
 //Randomly generated string with numbers with length set to 6
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true })); //body parser
-app.use(cookieSessionConfig)
-// app.use(cookieParser()); // to create cookies, makes them available to req and res
+// app.use(cookieSession({
+//   name: 'session',
+//   keys: ['secret'],
+
+//   // Cookie Options
+//   maxAge: 24 * 60 * 60 * 1000 // 24 hours
+// }))
+app.use(cookieParser()); // to create cookies, makes them available to req and res
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -142,12 +141,17 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
+/// POST URLS ///
 app.post("/urls", (req, res) => {
+  // if (!req.cookie.userId) {
+  //   return res.send("<h1> Sorry, you must be logged in to use this feature! </h1>")
+  // }
   const id = randomGenString();
   urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
 });
 
+/// NEW URLS ///
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.cookies["userId"]]

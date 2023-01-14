@@ -12,9 +12,9 @@ const testUsers = {
 
 describe('findUserByEmail', function() {
   it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", testUsers)
+    const user = findUserByEmail("user@example.com", testUsers)
     const expectedUserID = "userRandomID";
-    assert.equal(user, testUsers['userRandomId'])
+    assert.equal(user, testUsers['userRandomID'])
   });
   it('should return undefined if an email is non existent', function(){
     const user = findUserByEmail("tester@test.com")

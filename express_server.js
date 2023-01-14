@@ -28,11 +28,10 @@ const users = {
 };
 
 // Function for finding user by their email
-const findUserByEmail = function(email) {
-  for (const uid in users) {
-    const userObj = users[uid];
-    if (userObj.email === email) {
-      return userObj;
+const findUserByEmail = function(email, database) {
+  for (let uid in database) {
+    if (database[uid].email === email) {
+      return database[uid];
     }
   }
   return null;
@@ -142,7 +141,7 @@ app.post("/register", (req, res) => {
 // POST LOGIN
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // destructure of req.body.email and req.body.password
-  const foundUser = findUserByEmail(email);
+  const foundUser = findUserByEmail(email, users);
   // If no user email is found
   if (!foundUser) {
     return res.status(403).send("<h1> Error! Email was not found! </h1>");

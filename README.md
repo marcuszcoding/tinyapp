@@ -4,8 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["Alt text"](/Users/marcuszimmer/Desktop/Screen Shot 2023-01-13 at 9.33.41 PM.png "Optional Title")
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
 
 ## Dependencies
 
@@ -22,3 +25,5 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## How to use TinyApp
 
+1.) Boot Up And Register An Account
+  - In order to use TinyApps features, we need port into our local host! With this code we will be booting into our local host 8080, but feel free 

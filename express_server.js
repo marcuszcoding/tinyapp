@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const cookieSession = require("cookie-session");
 // const cookieParser = require("cookie-parser");
 
+const { findUserByEmail } = require("./helpers")
+
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -25,16 +27,6 @@ const users = {
     email: "user@example.com",
     password: "pass",
   },
-};
-
-// Function for finding user by their email
-const findUserByEmail = function(email, database) {
-  for (let uid in database) {
-    if (database[uid].email === email) {
-      return database[uid];
-    }
-  }
-  return null;
 };
 
 const urlsForUser = function(userID) {

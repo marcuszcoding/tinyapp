@@ -125,14 +125,15 @@ app.post("/register", (req, res) => {
 
   let id = randomGenString();
   let newPassword = bcrypt.hashSync(req.body.password, 10);
+
   const user = {
     id,
     email,
-    password
+    password: newPassword
   };
 
   users[id] = user;
-  user[newPassword] = password;
+  // user[password] = newPassword;
 
   req.session["userId"] = user.id;
   res.redirect("/urls");
@@ -146,12 +147,12 @@ app.post("/login", (req, res) => {
   if (!foundUser) {
     return res.status(403).send("<h1> Error! Email was not found! </h1>");
   } //if user is found but password does not match
-  if (!bcrypt.compareSync(foundUser.password, password)) {
-    return res.status(403).send("<h1> Error! Password is not correct! </h1>");
+  if (bcrypt.compareSync(password, foundUser.password)) {
+    req.session.userId = foundUser.id;
+    res.redirect("/urls");
+    return;
   }
-
-  req.session.userId = foundUser.id;
-  res.redirect("/urls");
+  return res.status(403).send("<h1> Error! Password is not correct! </h1>");
 });
 
 /// POST URLS ///
@@ -182,7 +183,7 @@ app.get("/urls/:id", (req, res) => {
   const urlExists = urlsForUser(req.session.userId);
 
   if (!req.session.userId) {
-    return res.status(400).send("Need to be logged in");
+    return res.status(401).send("Please Login or Register!");
   }
 
   // [array of short urls user own]
@@ -216,7 +217,7 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
 
   if (!req.session.userId) {
-    return res.status(400).send("Need to be logged in");
+    return res.status(401).send("Need to be logged in");
   }
  
   // if requested short url is not in the shortURLs array
@@ -237,7 +238,7 @@ app.post("/urls/:id/edit", (req, res) => {
 // DELETE
 app.post("/urls/:id/delete", (req, res)=> {
   if (!req.session.userId) {
-    return res.status(400).send("Need to be logged in");
+    return res.status(401).send("You need to be logged in!");
   }
   // if requested short url is not in the shortURLs array
   if (!urlDatabase[req.params.id]) {

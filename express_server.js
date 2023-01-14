@@ -4,9 +4,8 @@ const PORT = 8080; // default port 8080
 const morgan = require("morgan");
 const bcrypt = require("bcryptjs");
 const cookieSession = require("cookie-session");
-// const cookieParser = require("cookie-parser");
 
-const { findUserByEmail } = require("./helpers")
+const { findUserByEmail } = require("./helpers"); // requiring find user by email function
 
 app.set("view engine", "ejs");
 
@@ -52,11 +51,10 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-
-// app.use(cookieParser()); // to create cookies, makes them available to req and res
-
-
+////////////////
 //// ROUTES ////
+////////////////
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -65,7 +63,7 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-///Creating URLS Page///
+/// CREATE URLS PAGE ///
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlsForUser(req.session["userId"]),
@@ -74,10 +72,10 @@ app.get("/urls", (req, res) => {
   if (req.session.userId) {
     return res.render("urls_index", templateVars);
   }
-  res.redirect("/login"); //Redirects to login page
+  res.redirect("/login"); //Redirects to login page if not logged in
 });
 
-// Render Login Page
+/// RENDER LOGIN ///
 app.get('/login', (req, res) => {
   const templateVars = { user: users[req.session["userId"]]};
   if (req.session.userId) {
@@ -87,7 +85,7 @@ app.get('/login', (req, res) => {
   res.render("urls_login", templateVars);
 });
 
-// Render Register Page
+/// RENDER REGISTER ///
 app.get("/register", (req, res) => {
   const templateVars = { user: null };
 
@@ -97,7 +95,7 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
-// POST REGISTER
+/// POST REGISTER ///
 app.post("/register", (req, res) => {
   const { email, password } = req.body; // destructure
 
@@ -124,20 +122,19 @@ app.post("/register", (req, res) => {
   };
 
   users[id] = user;
-  // user[password] = newPassword;
 
   req.session["userId"] = user.id;
   res.redirect("/urls");
 });
 
-// POST LOGIN
+/// POST LOGIN ///
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // destructure of req.body.email and req.body.password
   const foundUser = findUserByEmail(email, users);
   // If no user email is found
   if (!foundUser) {
     return res.status(403).send("<h1> Error! Email was not found! </h1>");
-  } //if user is found but password does not match
+  } // If user is found but password does not match
   if (bcrypt.compareSync(password, foundUser.password)) {
     req.session.userId = foundUser.id;
     res.redirect("/urls");
@@ -159,7 +156,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-/// NEW URLS ///
+/// RENDER NEW URLS ///
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.session["userId"]]
@@ -179,14 +176,12 @@ app.get("/urls/:id", (req, res) => {
 
   // [array of short urls user own]
   const shortURLs = Object.keys(urlExists);
-  // if requested short url is not in the shortURLs array
+  // If requested short url is not in the shortURLs array
   if (!shortURLs.includes(req.params.id)) {
     return res.send("short URL does not exist");
   }
 
-  // if user owns the requested URL
-
-  //Happy Path
+  // If user owns the requested URL
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
@@ -204,7 +199,7 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-// UPDATE
+/// UPDATE ///
 app.post("/urls/:id/edit", (req, res) => {
 
   if (!req.session.userId) {
@@ -226,7 +221,7 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-// DELETE
+/// DELETE ///
 app.post("/urls/:id/delete", (req, res)=> {
   if (!req.session.userId) {
     return res.status(401).send("You need to be logged in!");
@@ -245,14 +240,14 @@ app.post("/urls/:id/delete", (req, res)=> {
   res.redirect(`/urls`);
 });
 
-// LOGOUT
+/// LOGOUT //
 app.post("/logout", (req, res) => {
   res.clearCookie("session");
   res.clearCookie("session.sig");
   res.redirect("/login");
 });
 
-// LISTEN
+/// LISTEN ///
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
